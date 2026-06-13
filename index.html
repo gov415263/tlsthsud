@@ -107,57 +107,6 @@
         .fade-out-fast { animation: fadeOut 0.3s ease-out forwards; }
         @keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
         * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-        /* 비밀번호 그룹 레이아웃 정의 */
-#id-pw-group {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1170px;
-    height: 2289px;
-    z-index: 30025;
-    background-color: #ffffff;
-}
-
-/* 비밀번호 기호(⦁) 표시 영역 스타일 */
-.pw-dot-container {
-    position: absolute;
-    left: 54px;
-    top: 682px;
-    width: 98px;        /* 가로 54 ~ 152 */
-    height: 17px;       /* 세로 682 ~ 699 */
-    font-family: "appleSDgothicNeoR00Regular", "Apple SD Gothic Neo", sans-serif;
-    font-size: 13pt;
-    letter-spacing: 100px; /* 자간 100 설정 */
-    color: #000000;
-    line-height: 17px;
-    white-space: nowrap;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 30040;
-}
-
-/* 가상 키패드 이미지 컨테이너 (정밀 좌표 매핑용) */
-.keypad-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1170px;
-    height: 2289px;
-    z-index: 30035;
-}
-
-/* 키패드 위 랜덤 0~9 숫자 오버레이 텍스트 스타일 */
-.keypad-num {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "맑은 고딕", "Malgun Gothic", sans-serif;
-    font-weight: bold;
-    font-size: 45px; /* 배경 키패드 원본 숫자에 맞게 가독성 좋은 크기로 조정 */
-    color: #000000;
-    pointer-events: none; /* 클릭은 맵 영역이 받도록 처리 */
-}
     </style>
 </head>
 <body>
@@ -190,40 +139,6 @@
                             <div id="progress-bar"></div>
                         </div>
                         <div id="live-time-text">0000년00월00일 00:00:00</div>
-                    </div>
-                    <div id="id-pw-group" style="display: none;">
-                        <img src="images/id_pw.webp" class="layer-img" usemap="#pw-bg-map">
-                        <map name="pw-bg-map">
-                            <area shape="rect" coords="41,652,1130,746" href="javascript:void(0);" onclick="openKeypad()">
-                        </map>
-
-                        <div id="pw-dot-display" class="pw-dot-container"></div>
-
-                        <div id="keypad-layer" class="keypad-container" style="display: block;">
-                            <img src="images/id_pw_keypad.webp" class="layer-img" usemap="#keypad-map">
-                            <map name="keypad-map">
-                                <area shape="rect" coords="0,1574,291,1749" href="javascript:void(0);" onclick="handleKeypadTap(0)">
-                                <area shape="rect" coords="292,1574,584,1749" href="javascript:void(0);" onclick="handleKeypadTap(1)">
-                                <area shape="rect" coords="585,1574,877,1749" href="javascript:void(0);" onclick="handleKeypadTap(2)">
-                                <area shape="rect" coords="878,1574,1170,1749" href="javascript:void(0);" onclick="handleKeypadTap(3)">
-
-                                <area shape="rect" coords="0,1749,291,1923" href="javascript:void(0);" onclick="handleKeypadTap(4)">
-                                <area shape="rect" coords="292,1749,584,1923" href="javascript:void(0);" onclick="handleKeypadTap(5)">
-                                <area shape="rect" coords="585,1749,877,1923" href="javascript:void(0);" onclick="handleKeypadTap(6)">
-                                <area shape="rect" coords="878,1749,1170,1923" href="javascript:void(0);" onclick="handleKeypadTap(7)">
-
-                                <area shape="rect" coords="0,1924,291,2098" href="javascript:void(0);" onclick="handleKeypadTap(8)">
-                                <area shape="rect" coords="292,1924,584,2098" href="javascript:void(0);" onclick="handleKeypadTap(9)">
-                                <area shape="rect" coords="585,1924,877,2098" href="javascript:void(0);" onclick="handleKeypadTap(10)">
-                                <area shape="rect" coords="878,1924,1170,2098" href="javascript:void(0);" onclick="handleKeypadTap(11)">
-
-                                <area shape="rect" coords="0,2099,291,2274" href="javascript:void(0);" onclick="backspacePw()">
-                                <area shape="rect" coords="292,2099,584,2274" href="javascript:void(0);" onclick="clearPw()">
-                                <area shape="rect" coords="1096,1482,1144,1531" href="javascript:void(0);" onclick="closeKeypad()">
-                            </map>
-
-                            <div id="keypad-text-overlay"></div>
-                        </div>
                     </div>
                     <div id="id-details-group" style="display: none;">
                         <img src="images/id_details.webp" id="details-main-img" class="layer-img" style="z-index: 30030;">
@@ -369,160 +284,12 @@
         function confirmExit() { showIosModal(); }
         function showIosModal() {const modal = document.getElementById('ios-modal');modal.style.display = 'flex';modal.classList.remove('showing', 'hiding');void modal.offsetWidth;modal.classList.add('showing');}
         function closeIosModal() {const modal = document.getElementById('ios-modal');modal.classList.remove('showing');modal.classList.add('hiding');setTimeout(() => {modal.style.display = 'none';modal.classList.remove('hiding');}, 300); }
-function toggleToDetails() {
-    // 메인 그룹을 숨기고 비밀번호 그룹을 활성화
-    document.getElementById('id-main-group').style.display = 'none';
-    document.getElementById('id-pw-group').style.display = 'block';
-    document.getElementById('id-details-group').style.display = 'none';
-    
-    // 비밀번호 입력값 초기화 및 첫 셔플 실행 후 키패드 열기
-    clearPw();
-    openKeypad();
-}        function resetToggleState() {isToggled = false;const swBtn = document.getElementById('toggle-sw-btn');const swBg = document.getElementById('toggle-sw-bg');const toggleImg = document.getElementById('details-toggle-img');if (swBtn) swBtn.style.left = "-115px";if (swBg) swBg.style.opacity = "0";if (toggleImg) toggleImg.src = "images/id_details_1.webp";}const menuPageEl = document.getElementById('menu-page');if (menuPageEl) {menuPageEl.addEventListener('touchend', function (e) {const now = (new Date()).getTime();if (now - lastTouchEnd <= 300) { e.preventDefault(); }lastTouchEnd = now;}, { passive: false });}if ('serviceWorker' in navigator) {navigator.serviceWorker.register('./sw.js').then(() => console.log("success")).catch((err) => console.error("error:", err));}
+        function toggleToDetails() {const mainGroup = document.getElementById('id-main-group');const detailsGroup = document.getElementById('id-details-group');if (mainGroup && detailsGroup) {mainGroup.style.display = 'none';detailsGroup.style.display = 'block';}}let isToggled = false; function handleToggle() {const swBtn = document.getElementById('toggle-sw-btn');const swBg = document.getElementById('toggle-sw-bg');const toggleImg = document.getElementById('details-toggle-img');if (!isToggled) {swBtn.style.left = "0px";swBg.style.opacity = "1";toggleImg.src = "images/id_details_2.webp";isToggled = true;} else {swBtn.style.left = "-115px";swBg.style.opacity = "0";toggleImg.src = "images/id_details_1.webp";isToggled = false;}}
+        function resetToggleState() {isToggled = false;const swBtn = document.getElementById('toggle-sw-btn');const swBg = document.getElementById('toggle-sw-bg');const toggleImg = document.getElementById('details-toggle-img');if (swBtn) swBtn.style.left = "-115px";if (swBg) swBg.style.opacity = "0";if (toggleImg) toggleImg.src = "images/id_details_1.webp";}const menuPageEl = document.getElementById('menu-page');if (menuPageEl) {menuPageEl.addEventListener('touchend', function (e) {const now = (new Date()).getTime();if (now - lastTouchEnd <= 300) { e.preventDefault(); }lastTouchEnd = now;}, { passive: false });}if ('serviceWorker' in navigator) {navigator.serviceWorker.register('./sw.js').then(() => console.log("success")).catch((err) => console.error("error:", err));}
         function toggleIdMenu(open) {const dim = document.getElementById('id-menu-dim');const container = document.getElementById('id-menu-container');if (open) {if (container) container.style.display = 'block'; if (dim) dim.style.display = 'block';container.classList.remove('closing');container.classList.add('active');} else {if (dim) dim.style.display = 'none';container.classList.add('closing');container.classList.remove('active');setTimeout(() => {container.classList.remove('closing');}, 300);}}
         function toggleFullIcon(event) {event.stopPropagation(); const fullicon = document.getElementById('id-menu-fullicon');const menu2 = document.getElementById('id-menu2');const menu3 = document.getElementById('id-menu3');const menu2Zone = document.getElementById('menu2-popup-click-zone');fullicon.classList.toggle('rotated');menu2.classList.toggle('moved');menu3.classList.toggle('moved');menu2Zone.classList.toggle('moved');}
         function openIosModalFromMenu(event) {event.stopPropagation();showIosModal();}
-function goToFinalScreen() {
-    if (timerInterval) { clearInterval(timerInterval); }
-    document.getElementById('id-detail-screen').style.display = 'none';
-    document.getElementById('final-screen').style.display = 'block';
-    
-    // 모든 상태 원복
-    document.getElementById('id-main-group').style.display = 'block';
-    document.getElementById('id-pw-group').style.display = 'none';
-    document.getElementById('id-details-group').style.display = 'none';
-    
-    clearPw();
-    resetToggleState();
-    
-    const overlay = document.getElementById('new-page-overlay');
-    if (overlay) {
-        overlay.style.overflowY = 'hidden';
-        overlay.scrollTo(0, 0);
-    }
-    const container = document.querySelector('.bounce-container');
-    if (container) { container.scrollTo(0, 0); }
-}
-let currentPassword = ""; // 입력된 비밀번호 문자열을 보관할 변수
-let keypadLayout = [];    // 현재 화면에 매핑된 12개 칸의 숫자 배열 정보를 저장
-
-// 각 입력 영역의 정밀 좌표 정의 (중앙에 숫자를 정확히 배치하기 위한 바운딩 박스)
-const keypadAreas = [
-    { x1: 0, y1: 1574, x2: 291, y2: 1749 },
-    { x1: 292, y1: 1574, x2: 584, y2: 1749 },
-    { x1: 585, y1: 1574, x2: 877, y2: 1749 },
-    { x1: 878, y1: 1574, x2: 1170, y2: 1749 },
-    
-    { x1: 0, y1: 1749, x2: 291, y2: 1923 },
-    { x1: 292, y1: 1749, x2: 584, y2: 1923 },
-    { x1: 585, y1: 1749, x2: 877, y2: 1923 },
-    { x1: 878, y1: 1749, x2: 1170, y2: 1923 },
-    
-    { x1: 0, y1: 1924, x2: 291, y2: 2098 },
-    { x1: 292, y1: 1924, x2: 584, y2: 2098 },
-    { x1: 585, y1: 1924, x2: 877, y2: 2098 },
-    { x1: 878, y1: 1924, x2: 1170, y2: 2098 }
-];
-
-// 1. 팀 단위 랜덤 배치 기능 (012 / 3456 / 789 / 공백3개)
-function generateRandomKeypad() {
-    const teams = [
-        [0, 1, 2],
-        [3, 4, 5, 6],
-        [7, 8, 9],
-        ['', '', ''] // 남은 3개의 공간을 채울 공백 팀
-    ];
-
-    // 피셔-예이츠 셔플로 팀(묶음) 단위를 완전 무작위로 섞음
-    for (let i = teams.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [teams[i], teams[j]] = [teams[j], teams[i]];
-    }
-
-    // 섞인 팀들을 하나의 12차원 단일 배열로 평탄화(Flatten)
-    keypadLayout = teams.flat();
-    renderKeypadText();
-}
-
-// 2. 가상 키패드 위에 숫자를 정확한 중앙 위치에 스타일링하여 그리는 함수
-function renderKeypadText() {
-    const container = document.getElementById('keypad-text-overlay');
-    container.innerHTML = ""; // 기존 텍스트 청소
-
-    keypadLayout.forEach((val, idx) => {
-        if (val === '') return; // 공백 데이터는 요소를 생성하지 않고 건너뜀
-
-        const area = keypadAreas[idx];
-        const width = area.x2 - area.x1;
-        const height = area.y2 - area.y1;
-
-        // 동적 <div> 생성 및 중앙 정렬 배치 스타일 주입
-        const numEl = document.createElement('div');
-        numEl.className = 'keypad-num';
-        numEl.innerText = val;
-        numEl.style.left = area.x1 + 'px';
-        numEl.style.top = area.y1 + 'px';
-        numEl.style.width = width + 'px';
-        numEl.style.height = height + 'px';
-
-        container.appendChild(numEl);
-    });
-}
-
-// 3. 가상 키패드 제어 (열기 / 닫기)
-function openKeypad() {
-    generateRandomKeypad(); // 열릴 때마다 무작위 재배치
-    document.getElementById('keypad-layer').style.display = 'block';
-}
-
-function closeKeypad() {
-    document.getElementById('keypad-layer').style.display = 'none';
-}
-
-// 4. 숫자 키 입력 처리
-function handleKeypadTap(index) {
-    const selectedValue = keypadLayout[index];
-    
-    // 눌린 영역이 공백 데이터면 아무 연산도 수행하지 않고 종료
-    if (selectedValue === '') return;
-
-    // 패스워드가 이미 6자리 가득 찼다면 초과 입력 차단
-    if (currentPassword.length >= 6) return;
-
-    // 비밀번호 추가 및 화면 출력 갱신
-    currentPassword += selectedValue;
-    updatePwDisplay();
-
-    // 6자리가 완성되면 즉시 다음 단계(id-details-group)로 이관 처리
-    if (currentPassword.length === 6) {
-        setTimeout(() => {
-            document.getElementById('id-pw-group').style.display = 'none';
-            document.getElementById('id-details-group').style.display = 'block';
-        }, 150); // 사용자가 입력 피드백 기호를 인지할 수 있도록 아주 짧은 딜레이 제공
-    }
-}
-
-// 5. 문자 백스페이스 (하나 지우기)
-function backspacePw() {
-    if (currentPassword.length > 0) {
-        currentPassword = currentPassword.slice(0, -1);
-        updatePwDisplay();
-    }
-}
-
-// 6. 전체 지우기
-function clearPw() {
-    currentPassword = "";
-    updatePwDisplay();
-}
-
-// 7. 입력된 패스워드 개수만큼 특수문자 기호(⦁) 화면 출력 반영
-function updatePwDisplay() {
-    const displayEl = document.getElementById('pw-dot-display');
-    if (displayEl) {
-        // 입력 개수만큼 특수문자를 반복 생성
-        displayEl.innerText = "⦁".repeat(currentPassword.length);
-    }
-}    </script>
+        function goToFinalScreen() {if (timerInterval) {clearInterval(timerInterval);}document.getElementById('id-detail-screen').style.display = 'none';document.getElementById('final-screen').style.display = 'block';document.getElementById('id-main-group').style.display = 'block';document.getElementById('id-details-group').style.display = 'none';resetToggleState();const overlay = document.getElementById('new-page-overlay');if (overlay) {overlay.style.overflowY = 'hidden';overlay.scrollTo(0, 0);}const container = document.querySelector('.bounce-container');if (container) {container.scrollTo(0, 0);}}
+    </script>
 </body>
 </html>
